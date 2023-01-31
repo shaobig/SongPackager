@@ -29,6 +29,7 @@ public class Mp3TagPathResolver implements ResourceResolver<Path> {
 
     @Override
     public Path resolve(Path path) {
+        LOGGER.info("Resolve tags from: '{}'", path);
         try {
             Mp3File mp3File = new Mp3File(path);
             if (!mp3File.hasId3v2Tag()) {
@@ -42,10 +43,9 @@ public class Mp3TagPathResolver implements ResourceResolver<Path> {
                 LOGGER.warn("Either the year or the album tag hasn't been provided");
                 return EMPTY_PATH;
             }
-            LOGGER.info("Resolve tags from: '{}'", path);
             return Path.of(year.concat(" - ").concat(getStringResourceResolver().resolve(album)));
         } catch (IOException e) {
-            LOGGER.error("Can't read the tags from: '{}'", path);
+            LOGGER.error("Can't read the tags");
             return EMPTY_PATH;
         } catch (InvalidDataException | UnsupportedTagException e) {
             LOGGER.error("Not enough necessary tags");
