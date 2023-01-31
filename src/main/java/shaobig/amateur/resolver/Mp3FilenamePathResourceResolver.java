@@ -3,7 +3,7 @@ package shaobig.amateur.resolver;
 import java.nio.file.Path;
 import java.util.Locale;
 
-class Mp3FilenameResourceResolver implements ResourceResolver<Path> {
+class Mp3FilenamePathResourceResolver implements ResourceResolver<Path> {
 
     @Override
     public Path resolve(Path resource) {

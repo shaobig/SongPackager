@@ -14,7 +14,8 @@ public class OutputPathResourceResolver implements ResourceResolver<Path> {
 
     @Override
     public Path resolve(Path resource) {
-        return getOutputPath().resolve(getExtensionPathResolver().resolve(resource));
+        return getOutputPath()
+                .resolve(getExtensionPathResolver().resolve(resource));
     }
 
     public Path getOutputPath() {
