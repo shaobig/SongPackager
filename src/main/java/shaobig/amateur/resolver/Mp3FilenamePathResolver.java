@@ -3,15 +3,14 @@ package shaobig.amateur.resolver;
 import java.nio.file.Path;
 import java.util.Locale;
 
-class Mp3FilenamePathResolver implements PathResolver {
+class Mp3FilenamePathResolver implements ResourceResolver<Path> {
 
     @Override
-    public Path resolvePath(Path resource) {
-        String fileName = resource.toFile().getName();
+    public Path resolve(Path path) {
+        String fileName = path.toFile().getName();
         return Path.of("")
                 .resolve(fileName.substring(0, 1))
-                .resolve(fileName.substring(0, fileName.indexOf("-") - 1).toUpperCase(Locale.ROOT))
-                .resolve(fileName);
+                .resolve(fileName.substring(0, fileName.indexOf("-") - 1).toUpperCase(Locale.ROOT));
     }
 
 }
