@@ -1,5 +1,7 @@
 package shaobig.amateur.packager;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import shaobig.amateur.extension.Extension;
 import shaobig.amateur.maker.directory.CollectionDirectoryMaker;
 import shaobig.amateur.maker.directory.PathCollectionDirectoryMaker;
@@ -17,6 +19,8 @@ import java.nio.file.Path;
 
 public class ResourcePackager implements FileMaker {
 
+    private static final Logger LOGGER = LogManager.getLogger(ResourcePackager.class);
+
     private Extension extension;
 
     public ResourcePackager(Extension extension) {
@@ -25,6 +29,8 @@ public class ResourcePackager implements FileMaker {
 
     @Override
     public void makeFile(Path sourcePath, Path targetPath) {
+        LOGGER.info("Copy files from '{}' to '{}'", sourcePath, targetPath);
+
         DirectoryScanner directoryScanner = new ExtensionDirectoryScanner(getExtension());
         ResourceResolver<Path> pathResourceResolver = new OutputPathResolver(targetPath, new Mp3FilePathResolver(), new Mp3TagPathResolver());
         CollectionDirectoryMaker<Path> collectionDirectoryMaker = new PathCollectionDirectoryMaker();

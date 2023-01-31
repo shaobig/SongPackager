@@ -1,5 +1,7 @@
 package shaobig.amateur.scanner;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import shaobig.amateur.extension.Extension;
 import shaobig.amateur.extension.PathBasicFileAttributesBiPredicate;
 
@@ -12,6 +14,8 @@ import java.util.stream.Collectors;
 
 public class ExtensionDirectoryScanner implements DirectoryScanner {
 
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionDirectoryScanner.class);
+
     private static final int MAX_DEPTH = 1;
 
     private Extension extension;
@@ -22,11 +26,13 @@ public class ExtensionDirectoryScanner implements DirectoryScanner {
 
     @Override
     public Collection<Path> scan(Path path) {
+        LOGGER.info("Scan directory '{}'", path);
         try {
             return Files.find(path, MAX_DEPTH, new PathBasicFileAttributesBiPredicate(getExtension()))
                     .collect(Collectors.toCollection(ArrayList::new));
         } catch (IOException e) {
-            throw new RuntimeException("Can't fetch all data");
+            LOGGER.info("Can't scan resources by '{}' path", path);
+            throw new RuntimeException();
         }
     }
 

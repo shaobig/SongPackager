@@ -8,6 +8,8 @@ import shaobig.amateur.scanner.DirectoryScanner;
 
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 class InnerResourcePackager implements FileMaker {
@@ -27,7 +29,7 @@ class InnerResourcePackager implements FileMaker {
     @Override
     public void makeFile(Path sourcePath, Path targetPath) {
         Map<Path, Path> pathMap = getDirectoryScanner().scan(sourcePath).stream()
-                .collect(Collectors.toMap(path -> path, getResourceResolver()::resolve));
+                .collect(Collectors.toMap(Function.identity(), getResourceResolver()::resolve, (path, path2) -> path, TreeMap::new));
 
         getCollectionDirectoryMaker().makeDirectory(pathMap.values());
         getMapFileMaker().makeFiles(pathMap);
