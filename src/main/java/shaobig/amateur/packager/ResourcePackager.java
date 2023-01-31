@@ -6,9 +6,9 @@ import shaobig.amateur.maker.directory.PathCollectionDirectoryMaker;
 import shaobig.amateur.maker.file.FileMaker;
 import shaobig.amateur.maker.file.MapFileMaker;
 import shaobig.amateur.maker.file.PathMapFileMaker;
-import shaobig.amateur.resolver.OutputPathResourceResolver;
-import shaobig.amateur.resolver.ResourceResolverFactory;
-import shaobig.amateur.resolver.ResourceResolver;
+import shaobig.amateur.resolver.OutputPathResolver;
+import shaobig.amateur.resolver.PathResolverFactory;
+import shaobig.amateur.resolver.PathResolver;
 import shaobig.amateur.scanner.DirectoryScanner;
 import shaobig.amateur.scanner.ExtensionDirectoryScanner;
 
@@ -26,13 +26,13 @@ public class ResourcePackager implements FileMaker {
     public void makeFile(Path sourcePath, Path targetPath) {
         DirectoryScanner directoryScanner = new ExtensionDirectoryScanner(getExtension());
 
-        ResourceResolver<Path> extensionResourceResolver = ResourceResolverFactory.getResourceResolver();
-        ResourceResolver<Path> resourceResolver = new OutputPathResourceResolver(targetPath, extensionResourceResolver);
+        PathResolver extensionPathResolver = PathResolverFactory.getPathResolver();
+        PathResolver pathResolver = new OutputPathResolver(targetPath, extensionPathResolver);
 
         CollectionDirectoryMaker<Path> collectionDirectoryMaker = new PathCollectionDirectoryMaker();
         MapFileMaker mapFileMaker = new PathMapFileMaker();
 
-        FileMaker fileMaker = new InnerResourcePackager(directoryScanner, resourceResolver, collectionDirectoryMaker, mapFileMaker);
+        FileMaker fileMaker = new InnerResourcePackager(directoryScanner, pathResolver, collectionDirectoryMaker, mapFileMaker);
         fileMaker.makeFile(sourcePath, targetPath);
     }
 

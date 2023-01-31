@@ -2,20 +2,20 @@ package shaobig.amateur.resolver;
 
 import java.nio.file.Path;
 
-public class OutputPathResourceResolver implements ResourceResolver<Path> {
+public class OutputPathResolver implements PathResolver {
 
     private Path outputPath;
-    private ResourceResolver<Path> extensionPathResolver;
+    private PathResolver extensionPathResolver;
 
-    public OutputPathResourceResolver(Path outputPath, ResourceResolver<Path> extensionPathResolver) {
+    public OutputPathResolver(Path outputPath, PathResolver extensionPathResolver) {
         this.outputPath = outputPath;
         this.extensionPathResolver = extensionPathResolver;
     }
 
     @Override
-    public Path resolve(Path resource) {
+    public Path resolvePath(Path resource) {
         return getOutputPath()
-                .resolve(getExtensionPathResolver().resolve(resource));
+                .resolve(getExtensionPathResolver().resolvePath(resource));
     }
 
     public Path getOutputPath() {
@@ -26,11 +26,11 @@ public class OutputPathResourceResolver implements ResourceResolver<Path> {
         this.outputPath = outputPath;
     }
 
-    public ResourceResolver<Path> getExtensionPathResolver() {
+    public PathResolver getExtensionPathResolver() {
         return extensionPathResolver;
     }
 
-    public void setExtensionPathResolver(ResourceResolver<Path> extensionPathResolver) {
+    public void setExtensionPathResolver(PathResolver extensionPathResolver) {
         this.extensionPathResolver = extensionPathResolver;
     }
 }

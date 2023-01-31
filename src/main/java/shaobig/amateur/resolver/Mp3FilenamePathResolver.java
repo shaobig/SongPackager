@@ -3,10 +3,10 @@ package shaobig.amateur.resolver;
 import java.nio.file.Path;
 import java.util.Locale;
 
-class Mp3FilenamePathResourceResolver implements ResourceResolver<Path> {
+class Mp3FilenamePathResolver implements PathResolver {
 
     @Override
-    public Path resolve(Path resource) {
+    public Path resolvePath(Path resource) {
         String fileName = resource.toFile().getName();
         return Path.of("")
                 .resolve(fileName.substring(0, 1))

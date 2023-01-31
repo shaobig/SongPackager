@@ -3,7 +3,7 @@ package shaobig.amateur.packager;
 import shaobig.amateur.maker.directory.CollectionDirectoryMaker;
 import shaobig.amateur.maker.file.FileMaker;
 import shaobig.amateur.maker.file.MapFileMaker;
-import shaobig.amateur.resolver.ResourceResolver;
+import shaobig.amateur.resolver.PathResolver;
 import shaobig.amateur.scanner.DirectoryScanner;
 
 import java.nio.file.Path;
@@ -13,13 +13,13 @@ import java.util.stream.Collectors;
 class InnerResourcePackager implements FileMaker {
 
     private DirectoryScanner directoryScanner;
-    private ResourceResolver<Path> resourceResolver;
+    private PathResolver pathResolver;
     private CollectionDirectoryMaker<Path> collectionDirectoryMaker;
     private MapFileMaker mapFileMaker;
 
-    public InnerResourcePackager(DirectoryScanner directoryScanner, ResourceResolver<Path> resourceResolver, CollectionDirectoryMaker<Path> collectionDirectoryMaker, MapFileMaker mapFileMaker) {
+    public InnerResourcePackager(DirectoryScanner directoryScanner, PathResolver pathResolver, CollectionDirectoryMaker<Path> collectionDirectoryMaker, MapFileMaker mapFileMaker) {
         this.directoryScanner = directoryScanner;
-        this.resourceResolver = resourceResolver;
+        this.pathResolver = pathResolver;
         this.collectionDirectoryMaker = collectionDirectoryMaker;
         this.mapFileMaker = mapFileMaker;
     }
@@ -27,7 +27,7 @@ class InnerResourcePackager implements FileMaker {
     @Override
     public void makeFile(Path sourcePath, Path targetPath) {
         Map<Path, Path> pathMap = getDirectoryScanner().scan(sourcePath).stream()
-                .collect(Collectors.toMap(path -> path, getResourceResolver()::resolve));
+                .collect(Collectors.toMap(path -> path, getResourceResolver()::resolvePath));
 
         getCollectionDirectoryMaker().makeDirectory(pathMap.values());
         getMapFileMaker().makeFiles(pathMap);
@@ -57,11 +57,11 @@ class InnerResourcePackager implements FileMaker {
         this.mapFileMaker = mapFileMaker;
     }
 
-    public ResourceResolver<Path> getResourceResolver() {
-        return resourceResolver;
+    public PathResolver getResourceResolver() {
+        return pathResolver;
     }
 
-    public void setResourceResolver(ResourceResolver<Path> resourceResolver) {
-        this.resourceResolver = resourceResolver;
+    public void setResourceResolver(PathResolver pathResolver) {
+        this.pathResolver = pathResolver;
     }
 }
