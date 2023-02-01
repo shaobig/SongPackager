@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ExtensionDirectoryScanner implements DirectoryScanner {
 
@@ -26,13 +27,13 @@ public class ExtensionDirectoryScanner implements DirectoryScanner {
 
     @Override
     public Collection<Path> scan(Path path) {
-        LOGGER.info("Scan directory '{}'", path);
-        try {
-            return Files.find(path, MAX_DEPTH, new PathBasicFileAttributesBiPredicate(getExtension()))
-                    .collect(Collectors.toCollection(ArrayList::new));
+        LOGGER.info("Scan directory '{}':", path);
+        try (Stream<Path> pathStream = Files.find(path, MAX_DEPTH, new PathBasicFileAttributesBiPredicate(getExtension()))) {
+            return pathStream.collect(Collectors.toCollection(ArrayList::new));
         } catch (IOException e) {
-            LOGGER.info("Can't scan resources by '{}' path", path);
-            throw new RuntimeException();
+            String errorMessage = String.format("Can't scan resources by '%s' path", path);
+            LOGGER.error(errorMessage);
+            throw new RuntimeException(errorMessage);
         }
     }
 
