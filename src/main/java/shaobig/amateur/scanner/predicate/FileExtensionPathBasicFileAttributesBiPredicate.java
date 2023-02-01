@@ -1,5 +1,6 @@
-package shaobig.amateur.extension;
+package shaobig.amateur.scanner.predicate;
 
+import shaobig.amateur.extension.Extension;
 import shaobig.amateur.extension.matcher.FileExtensionMatcher;
 import shaobig.amateur.extension.matcher.FilenameUtilsFileExtensionMatcher;
 
@@ -7,17 +8,17 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.function.BiPredicate;
 
-public class PathBasicFileAttributesBiPredicate implements BiPredicate<Path, BasicFileAttributes> {
+class FileExtensionPathBasicFileAttributesBiPredicate implements BiPredicate<Path, BasicFileAttributes> {
 
     private Extension extension;
     private FileExtensionMatcher matcher;
 
-    public PathBasicFileAttributesBiPredicate(Extension extension) {
+    public FileExtensionPathBasicFileAttributesBiPredicate(Extension extension) {
         this.extension = extension;
         this.matcher = new FilenameUtilsFileExtensionMatcher();
     }
 
-    public PathBasicFileAttributesBiPredicate(Extension extension, FileExtensionMatcher matcher) {
+    public FileExtensionPathBasicFileAttributesBiPredicate(Extension extension, FileExtensionMatcher matcher) {
         this.extension = extension;
         this.matcher = matcher;
     }

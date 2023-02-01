@@ -3,7 +3,7 @@ package shaobig.amateur.scanner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import shaobig.amateur.extension.Extension;
-import shaobig.amateur.extension.PathBasicFileAttributesBiPredicate;
+import shaobig.amateur.scanner.predicate.ExtensionPathBasicFileAttributesBiPredicateFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -28,7 +28,7 @@ public class ExtensionDirectoryScanner implements DirectoryScanner {
     @Override
     public Collection<Path> scan(Path path) {
         LOGGER.info("Scan directory '{}':", path);
-        try (Stream<Path> pathStream = Files.find(path, MAX_DEPTH, new PathBasicFileAttributesBiPredicate(getExtension()))) {
+        try (Stream<Path> pathStream = Files.find(path, MAX_DEPTH, new ExtensionPathBasicFileAttributesBiPredicateFactory(getExtension()).getBiPredicate())) {
             return pathStream.collect(Collectors.toCollection(ArrayList::new));
         } catch (IOException e) {
             String errorMessage = String.format("Can't scan resources by '%s' path", path);
