@@ -1,25 +1,36 @@
 package shaobig.amateur.resolver;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.nio.file.Path;
 
 public class OutputPathResolver implements ResourceResolver<Path> {
 
+    private static final Logger LOGGER = LogManager.getLogger(OutputPathResolver.class);
+
     private Path outputPath;
-    private ResourceResolver<Path> extensionPathResolver;
+    private ResourceResolver<Path> filenamePathResolver;
     private ResourceResolver<Path> tagPathResolver;
 
-    public OutputPathResolver(Path outputPath, ResourceResolver<Path> extensionPathResolver, ResourceResolver<Path> tagPathResolver) {
+    public OutputPathResolver(Path outputPath, ResourceResolver<Path> filenamePathResolver, ResourceResolver<Path> tagPathResolver) {
         this.outputPath = outputPath;
-        this.extensionPathResolver = extensionPathResolver;
+        this.filenamePathResolver = filenamePathResolver;
         this.tagPathResolver = tagPathResolver;
     }
 
     @Override
     public Path resolve(Path path) {
-        return getOutputPath()
-                .resolve(getExtensionPathResolver().resolve(path))
-                .resolve(getTagPathResolver().resolve(path))
+        Path filenamePath = getFilenamePathResolver().resolve(path);
+        Path tagPath = getTagPathResolver().resolve(path);
+        Path fullOutputPath = getOutputPath().resolve(filenamePath)
+                .resolve(tagPath)
                 .resolve(path.toFile().getName());
+        if (tagPath.toString().equals(StringUtils.EMPTY)) {
+            LOGGER.warn("Save the file to the root directory: '{}'", fullOutputPath);
+        }
+        return fullOutputPath;
     }
 
     public Path getOutputPath() {
@@ -30,12 +41,12 @@ public class OutputPathResolver implements ResourceResolver<Path> {
         this.outputPath = outputPath;
     }
 
-    public ResourceResolver<Path> getExtensionPathResolver() {
-        return extensionPathResolver;
+    public ResourceResolver<Path> getFilenamePathResolver() {
+        return filenamePathResolver;
     }
 
-    public void setExtensionPathResolver(ResourceResolver<Path>  extensionPathResolver) {
-        this.extensionPathResolver = extensionPathResolver;
+    public void setFilenamePathResolver(ResourceResolver<Path> filenamePathResolver) {
+        this.filenamePathResolver = filenamePathResolver;
     }
 
     public ResourceResolver<Path> getTagPathResolver() {

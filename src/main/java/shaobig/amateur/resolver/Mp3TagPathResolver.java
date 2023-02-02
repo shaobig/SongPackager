@@ -4,9 +4,10 @@ import com.mpatric.mp3agic.ID3v2;
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.UnsupportedTagException;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import shaobig.amateur.validator.ID3v2ResourceValidator;
+import shaobig.amateur.validator.ResourceValidator;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -17,14 +18,14 @@ public class Mp3TagPathResolver implements ResourceResolver<Path> {
 
     private static final Path EMPTY_PATH = Path.of("");
 
-    private ResourceResolver<String> stringResourceResolver;
+    private ResourceValidator<ID3v2> id3v2ResourceValidator;
 
     public Mp3TagPathResolver() {
-        this.stringResourceResolver = new Mp3AlbumTagStringResourceResolver();
+        this.id3v2ResourceValidator = new ID3v2ResourceValidator();
     }
 
-    public Mp3TagPathResolver(ResourceResolver<String> stringResourceResolver) {
-        this.stringResourceResolver = stringResourceResolver;
+    public Mp3TagPathResolver(ResourceValidator<ID3v2> id3v2ResourceValidator) {
+        this.id3v2ResourceValidator = id3v2ResourceValidator;
     }
 
     @Override
@@ -32,18 +33,13 @@ public class Mp3TagPathResolver implements ResourceResolver<Path> {
         LOGGER.info("Resolve tags from: '{}'", path);
         try {
             Mp3File mp3File = new Mp3File(path);
-            if (!mp3File.hasId3v2Tag()) {
-                LOGGER.warn("Can't find the MP3 tags ID3V2");
+            ID3v2 id3v2Tag = mp3File.getId3v2Tag();
+            if (!getId3v2ResourceValidator().validate(id3v2Tag)) {
                 return EMPTY_PATH;
             }
-            ID3v2 id3v2Tag = mp3File.getId3v2Tag();
             String year = id3v2Tag.getYear();
             String album = id3v2Tag.getAlbum();
-            if (StringUtils.isEmpty(year) || StringUtils.isEmpty(album)) {
-                LOGGER.warn("Either the year or the album tag hasn't been provided");
-                return EMPTY_PATH;
-            }
-            return Path.of(year.concat(" - ").concat(getStringResourceResolver().resolve(album)));
+            return Path.of(year.concat(" - ").concat(album));
         } catch (IOException e) {
             LOGGER.error("Can't read the tags");
             return EMPTY_PATH;
@@ -53,11 +49,11 @@ public class Mp3TagPathResolver implements ResourceResolver<Path> {
         }
     }
 
-    public ResourceResolver<String> getStringResourceResolver() {
-        return stringResourceResolver;
+    public ResourceValidator<ID3v2> getId3v2ResourceValidator() {
+        return id3v2ResourceValidator;
     }
 
-    public void setStringResourceResolver(ResourceResolver<String> stringResourceResolver) {
-        this.stringResourceResolver = stringResourceResolver;
+    public void setId3v2ResourceValidator(ResourceValidator<ID3v2> id3v2ResourceValidator) {
+        this.id3v2ResourceValidator = id3v2ResourceValidator;
     }
 }
