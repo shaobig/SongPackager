@@ -29,7 +29,7 @@ class InnerResourcePackager implements FileMaker {
     @Override
     public void makeFile(Path sourcePath, Path targetPath) {
         Map<Path, Path> pathMap = getDirectoryScanner().scan(sourcePath).stream()
-                .collect(Collectors.toMap(Function.identity(), getResourceResolver()::resolve, (path, path2) -> path, TreeMap::new));
+                .collect(Collectors.toMap(Function.identity(), getPathResolver()::resolve, (path, path2) -> path, TreeMap::new));
 
         getCollectionDirectoryMaker().makeDirectory(pathMap.values());
         getMapFileMaker().makeFiles(pathMap);
@@ -59,11 +59,11 @@ class InnerResourcePackager implements FileMaker {
         this.mapFileMaker = mapFileMaker;
     }
 
-    public ResourceResolver<Path> getResourceResolver() {
+    public ResourceResolver<Path> getPathResolver() {
         return pathResolver;
     }
 
-    public void setResourceResolver(ResourceResolver<Path> pathResolver) {
+    public void setPathResolver(ResourceResolver<Path> pathResolver) {
         this.pathResolver = pathResolver;
     }
 }

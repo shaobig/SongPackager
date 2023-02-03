@@ -12,19 +12,19 @@ import shaobig.amateur.validator.ResourceValidator;
 import java.io.IOException;
 import java.nio.file.Path;
 
-public class Mp3TagPathResolver implements ResourceResolver<Path> {
+public class Mp3FileTagPathResolver implements ResourceResolver<Path> {
 
-    private static final Logger LOGGER = LogManager.getLogger(Mp3TagPathResolver.class);
+    private static final Logger LOGGER = LogManager.getLogger(Mp3FileTagPathResolver.class);
 
     private static final Path EMPTY_PATH = Path.of("");
 
     private ResourceValidator<ID3v2> id3v2ResourceValidator;
 
-    public Mp3TagPathResolver() {
+    public Mp3FileTagPathResolver() {
         this.id3v2ResourceValidator = new ID3v2ResourceValidator();
     }
 
-    public Mp3TagPathResolver(ResourceValidator<ID3v2> id3v2ResourceValidator) {
+    public Mp3FileTagPathResolver(ResourceValidator<ID3v2> id3v2ResourceValidator) {
         this.id3v2ResourceValidator = id3v2ResourceValidator;
     }
 

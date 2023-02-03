@@ -11,18 +11,24 @@ public class OutputPathResolver implements ResourceResolver<Path> {
     private static final Logger LOGGER = LogManager.getLogger(OutputPathResolver.class);
 
     private Path outputPath;
-    private ResourceResolver<Path> filenamePathResolver;
+    private ResourceResolver<Path> filePathResolver;
     private ResourceResolver<Path> tagPathResolver;
 
-    public OutputPathResolver(Path outputPath, ResourceResolver<Path> filenamePathResolver, ResourceResolver<Path> tagPathResolver) {
+    public OutputPathResolver(Path outputPath) {
         this.outputPath = outputPath;
-        this.filenamePathResolver = filenamePathResolver;
+        this.filePathResolver = new Mp3FilePathResolver();
+        this.tagPathResolver = new Mp3FileTagPathResolver();
+    }
+
+    public OutputPathResolver(Path outputPath, ResourceResolver<Path> filePathResolver, ResourceResolver<Path> tagPathResolver) {
+        this.outputPath = outputPath;
+        this.filePathResolver = filePathResolver;
         this.tagPathResolver = tagPathResolver;
     }
 
     @Override
     public Path resolve(Path path) {
-        Path filenamePath = getFilenamePathResolver().resolve(path);
+        Path filenamePath = getFilePathResolver().resolve(path);
         Path tagPath = getTagPathResolver().resolve(path);
         Path fullOutputPath = getOutputPath().resolve(filenamePath)
                 .resolve(tagPath)
@@ -41,12 +47,12 @@ public class OutputPathResolver implements ResourceResolver<Path> {
         this.outputPath = outputPath;
     }
 
-    public ResourceResolver<Path> getFilenamePathResolver() {
-        return filenamePathResolver;
+    public ResourceResolver<Path> getFilePathResolver() {
+        return filePathResolver;
     }
 
-    public void setFilenamePathResolver(ResourceResolver<Path> filenamePathResolver) {
-        this.filenamePathResolver = filenamePathResolver;
+    public void setFilePathResolver(ResourceResolver<Path> filePathResolver) {
+        this.filePathResolver = filePathResolver;
     }
 
     public ResourceResolver<Path> getTagPathResolver() {

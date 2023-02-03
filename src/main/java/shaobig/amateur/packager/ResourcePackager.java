@@ -8,8 +8,6 @@ import shaobig.amateur.maker.directory.PathCollectionDirectoryMaker;
 import shaobig.amateur.maker.file.FileMaker;
 import shaobig.amateur.maker.file.MapFileMaker;
 import shaobig.amateur.maker.file.PathMapFileMaker;
-import shaobig.amateur.resolver.Mp3FilePathResolver;
-import shaobig.amateur.resolver.Mp3TagPathResolver;
 import shaobig.amateur.resolver.OutputPathResolver;
 import shaobig.amateur.resolver.ResourceResolver;
 import shaobig.amateur.scanner.DirectoryScanner;
@@ -32,7 +30,7 @@ public class ResourcePackager implements FileMaker {
         LOGGER.info("Copy files from '{}' to '{}'", sourcePath, targetPath);
 
         DirectoryScanner directoryScanner = new ExtensionDirectoryScanner(getExtension());
-        ResourceResolver<Path> pathResourceResolver = new OutputPathResolver(targetPath, new Mp3FilePathResolver(), new Mp3TagPathResolver());
+        ResourceResolver<Path> pathResourceResolver = new OutputPathResolver(targetPath);
         CollectionDirectoryMaker<Path> collectionDirectoryMaker = new PathCollectionDirectoryMaker();
         MapFileMaker mapFileMaker = new PathMapFileMaker();
 
