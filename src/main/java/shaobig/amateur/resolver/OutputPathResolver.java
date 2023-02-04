@@ -1,30 +1,27 @@
 package shaobig.amateur.resolver;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import shaobig.amateur.resolver.filename.Mp3FilenamePathStringComplexResourceResolver;
+import shaobig.amateur.resolver.tag.Mp3TagPathStringComplexResourceResolver;
+
 import java.nio.file.Path;
-import java.util.List;
 
 public class OutputPathResolver implements ResourceResolver<Path> {
 
-    private static final List<ResourceResolver<String>> DEFAULT_FILE_RESOURCE_RESOLVERS = List.of(
-            new FirstLetterStringResourceResolver(),
-            new ArtistHyphenSongNameStringResourceResolver()
-    );
-
-    private static final List<ResourceResolver<String>> DEFAULT_TAG_RESOURCE_RESOLVERS = List.of(
-            new Mp3FileTagStringResolver()
-    );
+    private static final Logger LOGGER = LogManager.getLogger(OutputPathResolver.class);
 
     private Path outputPath;
-    private ResourceResolver<Path> filePathResolver;
-    private ResourceResolver<Path> tagPathResolver;
+    private ComplexResourceResolver<Path, String> filePathResolver;
+    private ComplexResourceResolver<Path, String> tagPathResolver;
 
     public OutputPathResolver(Path outputPath) {
         this.outputPath = outputPath;
-        this.filePathResolver = new PathStringComplexResourceResolver(DEFAULT_FILE_RESOURCE_RESOLVERS);
-        this.tagPathResolver = new PathStringComplexResourceResolver(DEFAULT_TAG_RESOURCE_RESOLVERS);
+        this.filePathResolver = new Mp3FilenamePathStringComplexResourceResolver();
+        this.tagPathResolver = new Mp3TagPathStringComplexResourceResolver();
     }
 
-    public OutputPathResolver(Path outputPath, ResourceResolver<Path> filePathResolver, ResourceResolver<Path> tagPathResolver) {
+    public OutputPathResolver(Path outputPath, ComplexResourceResolver<Path, String> filePathResolver, ComplexResourceResolver<Path, String> tagPathResolver) {
         this.outputPath = outputPath;
         this.filePathResolver = filePathResolver;
         this.tagPathResolver = tagPathResolver;
@@ -32,10 +29,13 @@ public class OutputPathResolver implements ResourceResolver<Path> {
 
     @Override
     public Path resolve(Path path) {
-        return getOutputPath()
+        LOGGER.info("Resolve path for '{}'", path);
+        Path outputPath = getOutputPath()
                 .resolve(getFilePathResolver().resolve(path))
                 .resolve(getTagPathResolver().resolve(path))
                 .resolve(path.toFile().getName());
+        LOGGER.info("Set the file path to '{}'", outputPath);
+        return outputPath;
     }
 
     public Path getOutputPath() {
@@ -46,19 +46,19 @@ public class OutputPathResolver implements ResourceResolver<Path> {
         this.outputPath = outputPath;
     }
 
-    public ResourceResolver<Path> getFilePathResolver() {
+    public ComplexResourceResolver<Path, String> getFilePathResolver() {
         return filePathResolver;
     }
 
-    public void setFilePathResolver(ResourceResolver<Path> filePathResolver) {
+    public void setFilePathResolver(ComplexResourceResolver<Path, String> filePathResolver) {
         this.filePathResolver = filePathResolver;
     }
 
-    public ResourceResolver<Path> getTagPathResolver() {
+    public ComplexResourceResolver<Path, String> getTagPathResolver() {
         return tagPathResolver;
     }
 
-    public void setTagPathResolver(ResourceResolver<Path> tagPathResolver) {
+    public void setTagPathResolver(ComplexResourceResolver<Path, String> tagPathResolver) {
         this.tagPathResolver = tagPathResolver;
     }
 }

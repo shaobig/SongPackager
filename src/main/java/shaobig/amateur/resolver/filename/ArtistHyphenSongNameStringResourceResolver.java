@@ -1,12 +1,13 @@
-package shaobig.amateur.resolver;
+package shaobig.amateur.resolver.filename;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import shaobig.amateur.resolver.ResourceResolver;
 
 import java.util.Locale;
 
-public class ArtistHyphenSongNameStringResourceResolver implements ResourceResolver<String> {
+class ArtistHyphenSongNameStringResourceResolver implements ResourceResolver<String> {
 
     private static final Logger LOGGER = LogManager.getLogger(ArtistHyphenSongNameStringResourceResolver.class);
 

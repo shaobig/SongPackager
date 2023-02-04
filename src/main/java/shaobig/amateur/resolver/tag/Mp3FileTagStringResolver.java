@@ -1,4 +1,4 @@
-package shaobig.amateur.resolver;
+package shaobig.amateur.resolver.tag;
 
 import com.mpatric.mp3agic.ID3v2;
 import com.mpatric.mp3agic.InvalidDataException;
@@ -7,12 +7,13 @@ import com.mpatric.mp3agic.UnsupportedTagException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import shaobig.amateur.resolver.ResourceResolver;
 import shaobig.amateur.validator.ID3v2ResourceValidator;
 import shaobig.amateur.validator.ResourceValidator;
 
 import java.io.IOException;
 
-public class Mp3FileTagStringResolver implements ResourceResolver<String> {
+class Mp3FileTagStringResolver implements ResourceResolver<String> {
 
     private static final Logger LOGGER = LogManager.getLogger(Mp3FileTagStringResolver.class);
 
@@ -28,7 +29,6 @@ public class Mp3FileTagStringResolver implements ResourceResolver<String> {
 
     @Override
     public String resolve(String path) {
-        LOGGER.info("Resolve tags from: '{}'", path);
         try {
             Mp3File mp3File = new Mp3File(path);
             ID3v2 id3v2Tag = mp3File.getId3v2Tag();

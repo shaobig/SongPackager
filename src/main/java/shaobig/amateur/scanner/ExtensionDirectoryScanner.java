@@ -27,7 +27,7 @@ public class ExtensionDirectoryScanner implements DirectoryScanner {
 
     @Override
     public Collection<Path> scan(Path path) {
-        LOGGER.info("Scan directory '{}':", path);
+        LOGGER.info("Scan directory '{}'", path);
         try (Stream<Path> pathStream = Files.find(path, MAX_DEPTH, new ExtensionPathBasicFileAttributesBiPredicateFactory(getExtension()).getBiPredicate())) {
             return pathStream.collect(Collectors.toCollection(ArrayList::new));
         } catch (IOException e) {
