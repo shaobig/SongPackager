@@ -1,14 +1,18 @@
 package shaobig.amateur.resolver;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.nio.file.Path;
+import java.util.List;
 
 public class OutputPathResolver implements ResourceResolver<Path> {
 
-    private static final Logger LOGGER = LogManager.getLogger(OutputPathResolver.class);
+    private static final List<ResourceResolver<String>> DEFAULT_FILE_RESOURCE_RESOLVERS = List.of(
+            new FirstLetterStringResourceResolver(),
+            new ArtistHyphenSongNameStringResourceResolver()
+    );
+
+    private static final List<ResourceResolver<String>> DEFAULT_TAG_RESOURCE_RESOLVERS = List.of(
+            new Mp3FileTagStringResolver()
+    );
 
     private Path outputPath;
     private ResourceResolver<Path> filePathResolver;
@@ -16,8 +20,8 @@ public class OutputPathResolver implements ResourceResolver<Path> {
 
     public OutputPathResolver(Path outputPath) {
         this.outputPath = outputPath;
-        this.filePathResolver = new Mp3FilePathResolver();
-        this.tagPathResolver = new Mp3FileTagPathResolver();
+        this.filePathResolver = new PathStringComplexResourceResolver(DEFAULT_FILE_RESOURCE_RESOLVERS);
+        this.tagPathResolver = new PathStringComplexResourceResolver(DEFAULT_TAG_RESOURCE_RESOLVERS);
     }
 
     public OutputPathResolver(Path outputPath, ResourceResolver<Path> filePathResolver, ResourceResolver<Path> tagPathResolver) {
@@ -28,15 +32,10 @@ public class OutputPathResolver implements ResourceResolver<Path> {
 
     @Override
     public Path resolve(Path path) {
-        Path filenamePath = getFilePathResolver().resolve(path);
-        Path tagPath = getTagPathResolver().resolve(path);
-        Path fullOutputPath = getOutputPath().resolve(filenamePath)
-                .resolve(tagPath)
+        return getOutputPath()
+                .resolve(getFilePathResolver().resolve(path))
+                .resolve(getTagPathResolver().resolve(path))
                 .resolve(path.toFile().getName());
-        if (tagPath.toString().equals(StringUtils.EMPTY)) {
-            LOGGER.warn("Save the file to the root directory: '{}'", fullOutputPath);
-        }
-        return fullOutputPath;
     }
 
     public Path getOutputPath() {
@@ -59,7 +58,7 @@ public class OutputPathResolver implements ResourceResolver<Path> {
         return tagPathResolver;
     }
 
-    public void setTagPathResolver(ResourceResolver<Path>  tagPathResolver) {
+    public void setTagPathResolver(ResourceResolver<Path> tagPathResolver) {
         this.tagPathResolver = tagPathResolver;
     }
 }
